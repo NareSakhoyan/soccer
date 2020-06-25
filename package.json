@@ -6,12 +6,19 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "server": "node server/index.js"
+    "css-build": "node-sass src/assets/styles/main.scss src/assets/styles/main.css",
+    "css-deploy": "npm run css-build && npm run css-postcss",
+    "css-postcss": "postcss --use autoprefixer --output src/assets/styles/main.css src/assets/styles/main.css",
+    "css-watch": "npm run css-build -- --watch",
+    "deploy": "npm run css-deploy",
+    "css-start": "npm-run-all --parallel css-watch",
+    "asd": "npm run "
   },
   "dependencies": {
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "buefy": "^0.8.20",
+    "bulma": "^0.9.0",
     "connect-mysql": "^4.0.0",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
