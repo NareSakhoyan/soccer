@@ -11,8 +11,7 @@
     "css-postcss": "postcss --use autoprefixer --output src/assets/styles/main.css src/assets/styles/main.css",
     "css-watch": "npm run css-build -- --watch",
     "deploy": "npm run css-deploy",
-    "css-start": "npm-run-all --parallel css-watch",
-    "asd": "npm run "
+    "css-start": "npm-run-all --parallel css-watch"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -26,7 +25,8 @@
     "json-parser": "^3.1.2",
     "mysql2": "^2.1.0",
     "nodemon": "^2.0.4",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vuex": "^3.4.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.4.0",
