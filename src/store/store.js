@@ -13,7 +13,7 @@ const store = new Vuex.Store({
         cssAttributes: [],
         cssValues: [],
         css: [],
-        attributes: [],
+        htmlAttributes: [],
         attributeName: [],
         attributeValue: [],
     },
