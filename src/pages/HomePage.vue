@@ -13,7 +13,7 @@
                                     <option
                                             v-for="(i, index) in tagNames"
                                             :value="i.id_html_tags"
-                                            :key="`${index}}`">
+                                            :key="`${index}`">
                                         {{i.value}}
                                     </option>
                                 </b-select>
@@ -21,20 +21,24 @@
                             </b-field>
                         </b-field>
 
-                        <b-field name="cssAttribute" label="Css attributes: " class="level-item" @submit="setComponentData">
-                            <b-field>
+                        <b-field id="cssAttribute" name="cssAttribute" label="Css attributes: " class="level-item" @submit="setComponentData">
+                            <b-field id="show">
                                 <b-select placeholder="Choose..." name="selectCssAttribute" @blur="setComponentData">
                                     <option
                                             v-for="(i, index) in cssAttributes"
                                             :value="i.id_css"
-                                            :key="`${index}}`">
+                                            :key="`${index}`">
                                         {{i.value}}
                                     </option>
                                 </b-select>
                                 <b-input name="cssAttributeValue" @blur="setComponentData"/>
                             </b-field>
-                            <b-button native-type="submit">Add</b-button><!--                        make that add button add new field and value-->
-
+                            <div id="other">
+<!--                                <keep-alive>-->
+<!--                                    <component :is="cssAttr"></component>-->
+<!--                                </keep-alive>-->
+                            </div>
+                            <b-button @click="addCssAttribute">Add</b-button><!--                        make that add button add new field and value-->
                         </b-field>
 
 
@@ -44,7 +48,7 @@
                                     <option
                                             v-for="(i, index) in attributeName"
                                             :value="i.id_html_tag_attributes"
-                                            :key="`${index}}`">
+                                            :key="`${index}`">
                                         {{i.value}}
                                     </option>
                                 </b-select>
@@ -61,6 +65,7 @@
 
 <script>
     import {mapActions, mapGetters} from 'vuex'
+    // import Vue from 'vue'
 
     export default {
         name: "HomePage",
@@ -108,6 +113,51 @@
         methods: {
             ...mapActions(['setDataUrl', 'setDataArrName', 'getDataFromApi']),
             ...mapGetters(['getCode']),
+            addCssAttribute() {
+                let elem = document.getElementsByName('cssAttribute')[0]
+                let elemBFieldInner = document.createElement('b-field')
+                elemBFieldInner.innerHTML  = `<b-select placeholder="Choose..." name="selectCssAttribute" @blur="setComponentData">
+                                            <option
+                                                    v-for="(i, index) in cssAttributes"
+                                                    :value="i.id_css"
+                                                    :key="\`\${index}\`">{{i.value}}</option>
+                                        </b-select>
+                                        <b-input name="cssAttributeValue" @blur="setComponentData"/>`
+
+                elem.appendChild(elemBFieldInner)
+
+                // let vm = new Vue('addedComponnet',  {
+                //     render: () => {
+                //         console.log(elem)
+                //         let elemBFieldInner = document.createElement('b-field')
+                //         elemBFieldInner.innerHTML  = `<b-select placeholder="Choose..." name="selectCssAttribute" @blur="setComponentData">
+                //                                     <option
+                //                                             v-for="(i, index) in cssAttributes"
+                //                                             :value="i.id_css"
+                //                                             :key="\`\${index}\`">{{i.value}}</option>
+                //                                 </b-select>
+                //                                 <b-input name="cssAttributeValue" @blur="setComponentData"/>`
+                //         console.log('elem: ', elemBFieldInner);
+                //         return elemBFieldInner
+                //     }
+                // })
+
+                // let vm = Vue.component('cssAttr', {
+                //     template: `<b-select placeholder="Choose..." name="selectCssAttribute" @blur="setComponentData">
+                //                     <option
+                //                             v-for="(i, index) in cssAttributes"
+                //                             :value="i.id_css"
+                //                             :key="\`\${index}\`">{{i.value}}</option>
+                //                 </b-select>
+                //                 <b-input name="cssAttributeValue" @blur="setComponentData"/>`
+                // })
+
+
+                // vm.$mount('#other')
+                // console.log('vm: ', vm);
+                // elem.appendChild(vm)
+
+            },
             setComponentData(elem) {
                 console.log(9999999999999999999999999);
                 let value = elem.target.value
