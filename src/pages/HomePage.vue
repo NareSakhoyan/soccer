@@ -25,7 +25,7 @@
                             <div id="cssAttributes">
                                 <div id="cssAttributesIndex0">
                                     <b-field>
-                                        <b-select v-model="cssAttribute" placeholder="Choose..." name="selectCssAttribute" @change="setComponentData">
+                                        <b-select v-model="cssAttribute" placeholder="Choose..." name="selectCssAttribute" >
                                             <option
                                                     v-for="(i, index) in cssAttributes"
                                                     :value="`${i.id_cssAttributes}.0`"
@@ -33,7 +33,8 @@
                                                 {{i.value}}
                                             </option>
                                         </b-select>
-                                        <b-input v-model="`${cssValue}.0`" name="cssAttributeValue" @blur="setComponentData"/>
+                                        <b-input v-model="cssValue" name="cssAttributeValue" />
+<!--                                        <b-input v-model="`${cssValue}.0`" name="cssAttributeValue" @blur="setComponentData"/>-->
                                     </b-field>
                                 </div>
                             </div>
@@ -46,9 +47,9 @@
                                     <b-field name="attribute">
                                         <b-select placeholder="Choose..." name="selectAttribute" @blur="setComponentData">
                                             <option
-                                                v-for="(i, index) in htmlAttributes"
-                                                :value="i.id_htmlAttributes"
-                                                :key="`${index}`">
+                                                    v-for="(i, index) in htmlAttributes"
+                                                    :value="i.id_htmlAttributes"
+                                                    :key="`${index}`">
                                                 {{i.value}}
                                             </option>
                                         </b-select>
@@ -58,12 +59,17 @@
                             </div>
                             <b-button @click="addAttribute" name="html" class="addBtn">Add</b-button>
                         </b-field>
-<!--                        addHtmlAttribute-->
+                        <!--                        addHtmlAttribute-->
                         <b-button class="is-outlined is-success-passive apply level-item" >apply</b-button>
                     </form>
                 </div>
             </div>
         </div>
+        <inputValue :cssAttributesIndex="cssAttributesIndex" v-model="htmlValue" :cssAttribute="cssAttribute" :cssValue="cssValue" />
+        <inputValue :cssAttributesIndex="cssAttributesIndex" v-model="htmlValue" :cssAttribute="cssAttribute" :cssValue="cssValue" />
+        <inputValue :cssAttributesIndex="cssAttributesIndex" v-model="htmlValue" :cssAttribute="cssAttribute" :cssValue="cssValue" />
+        <hr>
+        <div id="mydiv"></div>
     </div>
 </template>
 
@@ -71,11 +77,16 @@
     import {mapActions, mapGetters} from 'vuex'
     import Vue from 'vue/dist/vue.esm.js'
     import Buefy from 'buefy'
+    import inputValue from "../components/inputValue";
 
     export default {
         name: "HomePage",
+        components: {
+            inputValue
+        },
         data() {
             return {
+                elems: [1, 2, 3],
                 cssAttributesIndex: 1,
                 htmlAttributesIndex: 1,
                 methodNumber: 0,
@@ -108,19 +119,18 @@
             },
             htmlTag: {
                 get() {
-                  return 'Choose...'
+                    return this.component.htmlTag
                 },
                 set(value) {
-                    console.log(value);
-                    this.component.htmlTag = value
+                    this.component.htmlTag = value;
+
                 }
             },
             htmlValue: {
                 get() {
-                    return ''
+                    return this.component.htmlValue
                 },
                 set(value) {
-                    console.log(value);
                     this.component.htmlValue = value
                 }
             },
@@ -129,16 +139,18 @@
                     return 'Choose...'
                 },
                 set(value) {
-                    console.log(value);
-                    this.component.css[value] = ''
+                    console.log('cssAttribute:', value)
+                    let arr = value.split('.')
+                    let x = this.component.css[arr[1]] = {}
+                    x[arr[0]] = ''
+                    console.log(this.component.css, 456)
                 }
             },
             cssValue: {
                 get() {
                     return ''
                 },
-                set(value, x) {
-                    console.log(value, x);
+                set(value) {
                     this.component.htmlValue = value
                 }
             }
@@ -152,14 +164,10 @@
                     }
                 }
             },
-            htmlTag(to, from) {
-                console.log(from, to)
-            }
         },
         methods: {
             ...mapActions(['setDataUrl', 'setDataArrName', 'getDataFromApi']),
             ...mapGetters(['getCode']),
-
             addAttribute(e) {
                 const type = e.target.name || e.target.parentNode.name
                 // let elem = document.getElementsByName('cssAttribute')[0]
@@ -175,39 +183,30 @@
                 // elemBFieldInner.innerHTML = html
                 // elem.appendChild(elemBFieldInner)
 
+
                 const elem = document.getElementById(`${type}Attributes`)//CssAtttributes
                 const id = `${type}AttributesIndex${this[`${type}AttributesIndex`]}`
                 const div = document.createElement('div')
                 div.setAttribute('id', id)
                 elem.appendChild(div)
-                const tmp = `<b-field>
-                                <b-select v-model="cssAttribute" placeholder="Choose..." name="select${type.toUpperCase()}Attribute" @blur="thisThis.setComponentData">
-                                    <option
-                                            v-for="(i, index) in thisThis.${type}Attributes"
-                                            :value="i.id_${type}Attributes'.${id}'"
-                                            :key="\`\${index}\`">{{i.value}}</option>
-                                </b-select>
-                                <b-input v-model="cssValue'.${id}'" name="${type}AttributeValue" @blur="thisThis.setComponentData"/>
-                           </b-field>`
-
-                const thisThis = this
-
-                const vm = Vue.extend({
-                    template: tmp,
-                    data() {
-                        return {
-                            thisThis
-                        }
-                    },
-                })
+                let vm = Vue.extend(inputValue)
                 vm.use(Buefy)
-                new vm().$mount(`#${id}`)
+                let instance = new vm()
+                instance.$parent = this
+                instance.$options.props = {
+                    "v-model": this.htmlValue,
+                    cssAttributesIndex: parseInt(this.cssAttributesIndex),
+                    cssAttribute: this.cssAttribute,
+                }
+                instance.$mount()
+                // instance.$mount(`#${id}`)
+                div.appendChild(instance.$el)
                 ++this.cssAttributesIndex
             },
-
             setComponentData(elem) {
                 let value = elem.target.value
                 if (!value) return;
+
                 let name = elem.target.name
                 console.log(name, value)
                 // if (name.substr(0, 6) === 'select') {
@@ -222,9 +221,7 @@
                 //         this.getCode(arrName, )
                 //     }
                 // }
-
                 console.log(elem.target)
-
                 // if (name === 'tagValue') {//make work for new html element
                 //     this.component['tagValue'] = value
                 // } else {//get property code
@@ -232,7 +229,6 @@
                 //     this.component[arrName].push({name: value})
                 //     this.getCode(arrName, )
                 // }
-
                 console.log('this.component: ', this.component)
             },
             apply() {
@@ -252,10 +248,23 @@
                 this.getDataFromApi()
                 this.arrName = arrName
                 ++this.methodNumber
+            },
+            mymet() {
+                const elem = document.getElementById('mydiv')
+                // elem.innerHTML += ` <b-select>
+                //                         <option
+                //                         v-for="(i, index) in cssAttributes"
+                //                         :value="\`\${i.id_cssAttributes}\`"
+                //                         :key="\`\${index}\`"><span v-html="i.value"></span>{{i.value}}</option>
+                //                     </b-select>    `
+                elem.innerHTML += ` <div v-for="elem in elems">
+                                        <span v-html="elem"></span>
+                                    </div>    `
             }
         },
         mounted() {
             this.getData()
+            this.mymet()
         },
     }
 </script>
